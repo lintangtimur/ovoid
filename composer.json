@@ -1,0 +1,21 @@
+{
+    "name": "child/ovoid",
+    "description": "Un-Official OVOID API Wrapper",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "lintangtimur",
+            "email": "lintangtimur915@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "files":[
+          "src/helper/function.php"
+        ],
+        "psr-4" :{
+          "Stelin\\": "src"
+        }
+    }
+}
