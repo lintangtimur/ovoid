@@ -42,3 +42,7 @@ use Stelin\OVOID;
 $ovoid = new OVOID($authToken);
 dd($ovoid->modelBalance()->getBalance()->getCardNo()('OVO'));
 ```
+
+## Profile Model
+
+## Permission Model
