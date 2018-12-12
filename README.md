@@ -1,6 +1,9 @@
 # ovoid
 Un-Official ovoid API Wrapper
 
+## Install
+`composer require lintangtimur/ovoid`
+
 ## Login
 ### first step
 ```php
