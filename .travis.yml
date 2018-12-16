@@ -4,6 +4,6 @@ php:
     - '7.1'
 sudo: true
 before_script:
-- composer install
+- composer install --dev
 install:
 - composer update
