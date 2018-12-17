@@ -21,8 +21,8 @@ class ParseResponse
     /**
      * Undocumented function
      *
-     * @param [type] $chResult
-     * @param [type] $url
+     * @param mixed  $chResult
+     * @param string $url
      */
     public function __construct($chResult, $url)
     {
