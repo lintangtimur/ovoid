@@ -78,7 +78,12 @@ class Login2FAVerifyResponse
         return $this->isSecurityCodeSet;
     }
 
-    public function getUdateAccessToken()
+    /**
+     * Get the value update access token
+     *
+     * @return string
+     */
+    public function getUpdateAccessToken()
     {
         return $this->updateAccessToken;
     }
