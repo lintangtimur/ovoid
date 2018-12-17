@@ -113,7 +113,7 @@ class OVOID
      *
      * @return \Stelin\Response\FrontResponse
      */
-    public function modelBalance()
+    public function balanceModel()
     {
         $ch = new Curl;
 
