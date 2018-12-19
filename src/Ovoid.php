@@ -109,6 +109,20 @@ class OVOID
     }
 
     /**
+     * Get budget detail
+     * 
+     * Amount, spending, total spending, and summary
+     *
+     * @return \Stelin\Response\BudgetResponse
+     */
+    public function getBudget()
+    {
+        $ch = new Curl;     
+
+        return $ch->get(OVOID::BASE_ENDPOINT. 'v1.0/budget/detail', null, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
      * Get OVO Balance
      *
      * @return \Stelin\Response\FrontResponse
