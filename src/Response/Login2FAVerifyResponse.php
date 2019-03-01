@@ -5,7 +5,6 @@ namespace Stelin\Response;
 class Login2FAVerifyResponse
 {
     private $mobile;
-    private $message;
     private $email;
     private $fullName;
     private $isEmailVerified;
@@ -15,7 +14,6 @@ class Login2FAVerifyResponse
     public function __construct($data)
     {
         $this->mobile = $data->mobile;
-        $this->message = $data->message;
         $this->email = $data->email;
         $this->fullName = $data->fullName;
         $this->isEmailVerified = $data->isEmailVerified;
@@ -31,11 +29,6 @@ class Login2FAVerifyResponse
     public function getMobile()
     {
         return $this->mobile;
-    }
-
-    public function getMessage()
-    {
-        return $this->message;
     }
 
     /**
