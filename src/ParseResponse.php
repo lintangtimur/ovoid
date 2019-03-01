@@ -12,9 +12,11 @@ class ParseResponse
     public $storeClass = [
         OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/login2FA'          => 'Stelin\Response\Login2FAResponse',
         OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/login2FA/verify'   => 'Stelin\Response\Login2FAVerifyResponse',
-        OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/loginSecurityCode' => 'Stelin\Response\LoginSecurityCodeResponse',
+        OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/loginSecurityCode/verify' => 'Stelin\Response\LoginSecurityCodeResponse',
         OVOID::BASE_ENDPOINT . 'v1.0/api/front/'                          => 'Stelin\Response\FrontResponse',
-        OVOID::BASE_ENDPOINT . 'v1.0/budget/detail'                       => 'Stelin\Response\BudgetResponse'
+        OVOID::BASE_ENDPOINT . 'v1.0/budget/detail'                       => 'Stelin\Response\BudgetResponse',
+        OVOID::BASE_ENDPOINT . 'v1.0/api/customers/transfer'             => 'Stelin\Response\CustomerTransferResponse',
+        OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/genTrxId'          => 'Stelin\Response\GenTrxIdResponse'
     ];
 
     private $response;

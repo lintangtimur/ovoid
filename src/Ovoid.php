@@ -105,21 +105,21 @@ class OVOID
             'updateAccessToken'=> $updateAccessToken
         ];
 
-        return $ch->post(OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/loginSecurityCode', $data, $this->headers)->getResponse();
+        return $ch->post(OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/loginSecurityCode/verify', $data, $this->headers)->getResponse();
     }
 
     /**
      * Get budget detail
-     * 
+     *
      * Amount, spending, total spending, and summary
      *
      * @return \Stelin\Response\BudgetResponse
      */
     public function getBudget()
     {
-        $ch = new Curl;     
+        $ch = new Curl;
 
-        return $ch->get(OVOID::BASE_ENDPOINT. 'v1.0/budget/detail', null, $this->_aditionalHeader())->getResponse();
+        return $ch->get(OVOID::BASE_ENDPOINT . 'v1.0/budget/detail', null, $this->_aditionalHeader())->getResponse();
     }
 
     /**
@@ -132,6 +132,50 @@ class OVOID
         $ch = new Curl;
 
         return $ch->get(OVOID::BASE_ENDPOINT . 'v1.0/api/front/', null, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * kirim cash sesama OVO
+     *
+     * @param  string                                   $to_mobilePhone
+     * @param  int                                      $amount
+     * @param  string                                   $message
+     * @throws \Stelin\Exception\AmountException
+     * @return \Stelin\Reponse\CustomerTransferResponse
+     */
+    public function transferOvo($to_mobilePhone, $amount, $message = null)
+    {
+        if ($amount < 10000) {
+            throw new \Stelin\Exception\AmountException('Minimal 10.000');
+        }
+
+        $ch = new Curl;
+        $data = [
+            'to'       => $to_mobilePhone,
+            'amount'   => $amount,
+            'message'  => $message ? null : '',
+            'trxId'    => $this->generateTrxId($to_mobilePhone, $amount)->getTrxId()
+        ];
+
+        return $ch->post(OVOID::BASE_ENDPOINT . 'v1.0/api/customers/transfer', $data, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * generate trxid
+     *
+     * @param  string                            $mobilePhone
+     * @param  int                               $amount
+     * @return \Stelin\Response\GenTrxIdResponse
+     */
+    private function generateTrxId($mobilePhone, $amount)
+    {
+        $ch = new Curl;
+        $data = [
+            'actionMark' => 'trf_ovo',
+            'amount'     => $amount
+        ];
+
+        return $ch->post(OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/genTrxId', $data, $this->_aditionalHeader())->getResponse();
     }
 
     /**
