@@ -6,6 +6,8 @@
 </p>
 <h2 align="center">Un-Official ovoid API Wrapper</h2>
 
+Telah di test pada OVO versi 2.8.0 | 1 Maret 2019
+
 ## Install
 `composer require lintangtimur/ovoid`
 
@@ -51,3 +53,20 @@ dd($ovoid->modelBalance()->getBalance()->getCardNo()('OVO'));
 ## Profile Model
 
 ## Permission Model
+
+## Transfer Sesama OVO
+<pre>
+Belum di test di OVO 2.8.0
+Telah di test di OVO 2.5.*
+</pre>
+
+```php
+public function transferOvo($to_mobilePhone, $amount, $message = null)
+```
+Sementara hanya bisa 2 kali transfer, untuk transfer ke-3 dari OVO butuh header signature. Jika ada yang bisa menemukan proses signaturenya silahkan ajukan pull request dengan senang hati :)
+
+## TODO
+- [ ] cek mutasi
+
+## Contribute
+Project ini saya membuatnya kasaran sekali, jadi ketika ada proses request ke endpoint ovo dan terjadi kegagalan atau parameter tidak sesuai, script masih belum bisa mendapatkan response error dari ovo nya, harus manual `dd` dari source code(dari file Response). Jadi silahkan berkontribusi, baik dari dokumentasi program atau membenahi script ini :)
