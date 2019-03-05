@@ -65,8 +65,42 @@ public function transferOvo($to_mobilePhone, $amount, $message = null)
 ```
 Sementara hanya bisa 2 kali transfer, untuk transfer ke-3 dari OVO butuh header signature. Jika ada yang bisa menemukan proses signaturenya silahkan ajukan pull request dengan senang hati :)
 
+## Transaction History
+```php
+/**
+     * Wallet Transaction
+     *
+     * @param int $page halaman ke berapa
+     * @param int $limit berapa kontent dalam 1 page
+     * @return \Stelin\Response\WalletTransactionResponse
+     */
+    public function getWalletTransaction($page, $limit = 10)
+```
+disitu ada hardcode productType 001, bisa dicoba sendiri itu efek terhadap apa, karena saya tesnya hasil transfer sesama OVO.
+
+### Mendapatkan semua notif
+```php
+    /**
+     * get all notification
+     *
+     * @return \Stelin\Response\NotificationAllResponse
+     */
+    public function allNotification()
+```
+
+### Cek berapa notifikasi yang belum dibaca
+```php
+/**
+     * mendapatkan total unread history
+     *
+     * @return \Stelin\Response\NotificationUnread
+     */
+    public function unreadHistory()
+```
+Contoh: `$ovo->unreadHistory()->getTotal()`
+
 ## TODO
-- [ ] cek mutasi
+- [x] cek mutasi
 
 ## Contribute
 Project ini saya membuatnya kasaran sekali, jadi ketika ada proses request ke endpoint ovo dan terjadi kegagalan atau parameter tidak sesuai, script masih belum bisa mendapatkan response error dari ovo nya, harus manual `dd` dari source code(dari file Response). Jadi silahkan berkontribusi, baik dari dokumentasi program atau membenahi script ini :)
