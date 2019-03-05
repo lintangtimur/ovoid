@@ -10,13 +10,15 @@ class ParseResponse
      * @var array
      */
     public $storeClass = [
-        OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/login2FA'          => 'Stelin\Response\Login2FAResponse',
-        OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/login2FA/verify'   => 'Stelin\Response\Login2FAVerifyResponse',
+        OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/login2FA'                 => 'Stelin\Response\Login2FAResponse',
+        OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/login2FA/verify'          => 'Stelin\Response\Login2FAVerifyResponse',
         OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/loginSecurityCode/verify' => 'Stelin\Response\LoginSecurityCodeResponse',
-        OVOID::BASE_ENDPOINT . 'v1.0/api/front/'                          => 'Stelin\Response\FrontResponse',
-        OVOID::BASE_ENDPOINT . 'v1.0/budget/detail'                       => 'Stelin\Response\BudgetResponse',
-        OVOID::BASE_ENDPOINT . 'v1.0/api/customers/transfer'             => 'Stelin\Response\CustomerTransferResponse',
-        OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/genTrxId'          => 'Stelin\Response\GenTrxIdResponse'
+        OVOID::BASE_ENDPOINT . 'v1.0/api/front/'                                 => 'Stelin\Response\FrontResponse',
+        OVOID::BASE_ENDPOINT . 'v1.0/budget/detail'                              => 'Stelin\Response\BudgetResponse',
+        OVOID::BASE_ENDPOINT . 'v1.0/api/customers/transfer'                     => 'Stelin\Response\CustomerTransferResponse',
+        OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/genTrxId'                 => 'Stelin\Response\GenTrxIdResponse',
+        OVOID::BASE_ENDPOINT . 'v1.0/notification/status/count/UNREAD'           => 'Stelin\Response\NotificationUnreadResponse',
+        OVOID::BASE_ENDPOINT . 'v1.0/notification/status/all'                    => 'Stelin\Response\NotificationAllResponse'
     ];
 
     private $response;
@@ -30,7 +32,15 @@ class ParseResponse
     public function __construct($chResult, $url)
     {
         $jsonDecodeResult = json_decode($chResult);
-        $this->response = new $this->storeClass[$url]($jsonDecodeResult);
+        
+        $parts = parse_url($url);
+        
+        if($parts['path'] == '/wallet/v2/transaction')
+        {
+            $this->response = new \Stelin\Response\WalletTransactionResponse($jsonDecodeResult);
+        }else{
+            $this->response = new $this->storeClass[$url]($jsonDecodeResult);
+        }
     }
 
     /**

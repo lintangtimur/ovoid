@@ -187,4 +187,46 @@ class OVOID
     {
         return ['Authorization: ' . $this->authToken];
     }
+
+    /**
+     * mendapatkan total unread history
+     *
+     * @return \Stelin\Response\NotificationUnread
+     */
+    public function unreadHistory()
+    {
+        $ch = new Curl;
+
+        return $ch->get(OVOID::BASE_ENDPOINT . 'v1.0/notification/status/count/UNREAD', null, $this->_aditionalHeader)->getResponse();
+    }
+
+    /**
+     * get all notification
+     *
+     * @return \Stelin\Response\NotificationAllResponse
+     */
+    public function allNotification()
+    {
+        $ch = new Curl;
+
+        return $ch->get(OVOID::BASE_ENDPOINT . 'v1.0/notification/status/all', null, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * Wallet Transaction
+     *
+     * @param int $page halaman ke berapa
+     * @param int $limit berapa kontent dalam 1 page
+     * @return \Stelin\Response\WalletTransactionResponse
+     */
+    public function getWalletTransaction($page, $limit = 10)
+    {
+        $ch = new Curl;
+
+        return $ch->get(
+            OVOID::BASE_ENDPOINT . 'wallet/v2/transaction?page='.$page.'&limit='.$limit.'&productType=001',
+            null,
+            $this->_aditionalHeader()
+        )->getResponse();
+    }
 }
