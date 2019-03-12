@@ -104,10 +104,10 @@ class Profile
 
     public function __construct($data)
     {
-        $key = array_keys($data);
+        $key = array_keys((array)$data);
         for ($i = 0; $i < count($key); $i++) {
             $keyPriv = $key[$i];
-            $this->$keyPriv = $data[$key[$i]];
+            $this->$keyPriv = ((array)$data)[$key[$i]];
         }
     }
 }

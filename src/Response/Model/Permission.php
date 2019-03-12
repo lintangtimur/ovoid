@@ -1,9 +1,10 @@
 <?php
 
 namespace Stelin\Response\Model;
+
 /**
  * Permission Class
- * 
+ *
  * Parsing permission key
  */
 class Permission
@@ -14,13 +15,13 @@ class Permission
     public function __construct($decoded)
     {
         foreach ($decoded as $key => $value) {
-            $this->_parseChildMenu($value['childMenu']);
-            $menuName = $value['menuName'];
+            $this->_parseChildMenu($value->childMenu);
+            $menuName = $value->menuName;
             $this->permission[$menuName] = [
-                'id'        => $value['id'],
-                'isEnabled' => $value['isEnabled'],
-                'state'     => $value['state'],
-                'childMenu' => $value['childMenu']
+                'id'        => $value->id,
+                'isEnabled' => $value->isEnabled,
+                'state'     => $value->state,
+                'childMenu' => $value->childMenu
             ];
         }
     }
@@ -28,7 +29,7 @@ class Permission
     /**
      * Get menu name by menu name
      *
-     * @param string $menuName
+     * @param  string $menuName
      * @return array
      */
     public function getMenuNamePermission($menuName)
@@ -49,7 +50,7 @@ class Permission
     private function _parseChildMenu($parentChildMenu)
     {
         foreach ($parentChildMenu as $key => $value) {
-            array_push($this->childMenu, $value['menuName']);
+            array_push($this->childMenu, $value->menuName);
         }
     }
 
