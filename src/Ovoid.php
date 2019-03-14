@@ -191,13 +191,13 @@ class OVOID
     /**
      * mendapatkan total unread history
      *
-     * @return \Stelin\Response\NotificationUnread
+     * @return \Stelin\Response\NotificationUnreadResponse
      */
     public function unreadHistory()
     {
         $ch = new Curl;
 
-        return $ch->get(OVOID::BASE_ENDPOINT . 'v1.0/notification/status/count/UNREAD', null, $this->_aditionalHeader)->getResponse();
+        return $ch->get(OVOID::BASE_ENDPOINT . 'v1.0/notification/status/count/UNREAD', null, $this->_aditionalHeader())->getResponse();
     }
 
     /**

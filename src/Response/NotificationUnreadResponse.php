@@ -8,7 +8,7 @@ class NotificationUnreadResponse
 
     public function __construct($data)
     {
-        $this->total = $data->total;
+        $this->total = $data->Total;
     }
 
     /**
