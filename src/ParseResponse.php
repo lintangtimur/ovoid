@@ -32,13 +32,16 @@ class ParseResponse
     public function __construct($chResult, $url)
     {
         $jsonDecodeResult = json_decode($chResult);
-        
+
+        if (isset($jsonDecodeResult->code)) {
+            throw new \Stelin\Exception\OvoidException($jsonDecodeResult->message);
+        }
+
         $parts = parse_url($url);
-        
-        if($parts['path'] == '/wallet/v2/transaction')
-        {
+
+        if ($parts['path'] == '/wallet/v2/transaction') {
             $this->response = new \Stelin\Response\WalletTransactionResponse($jsonDecodeResult);
-        }else{
+        } else {
             $this->response = new $this->storeClass[$url]($jsonDecodeResult);
         }
     }
