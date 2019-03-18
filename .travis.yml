@@ -1,8 +1,9 @@
 language: php
 php:
+    - '7.0'
     - '7.1'
-    - '7.2'
 sudo: true
-
+before_script:
+    - composer install
 install:
-- composer install
+- composer update
