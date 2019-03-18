@@ -3,6 +3,8 @@
 use PHPUnit\Framework\TestCase;
 use Stelin\OVOID;
 use Stelin\Meta\Meta;
+use Stelin\Response\Login2FAResponse;
+use Stelin\ParseResponse;
 
 class OvoidTest extends TestCase
 {
@@ -35,7 +37,7 @@ class OvoidTest extends TestCase
         $this->assertNotSame('asd', META::APP_ID);
         $this->assertIsString(Meta::APP_ID);
 
-        $this->assertSame('2.5.0', Meta::APP_VERSION);
+        $this->assertSame('2.8.0', Meta::APP_VERSION);
         $this->assertNotSame('1', Meta::APP_VERSION);
         $this->assertSame('Android', Meta::OS_NAME);
         $this->assertSame('8.1.0', Meta::OS_VERSION);
@@ -47,5 +49,17 @@ class OvoidTest extends TestCase
     {
         $this->assertSame('https://api.ovo.id/', OVOID::BASE_ENDPOINT);
         $this->assertNotEquals('https://api.ovo.id', OVOID::BASE_ENDPOINT);
+    }
+
+    public function testLogin2FAResponse()
+    {
+        $data = <<<JSON
+{
+"refId":"123"
+}
+JSON;
+
+        $login2faresponse = new Login2FAResponse(json_decode($data));
+        $this->assertEquals("123", $login2faresponse->getRefId());
     }
 }
