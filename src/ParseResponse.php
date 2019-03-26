@@ -32,7 +32,6 @@ class ParseResponse
      */
     public function __construct($chResult, $url)
     {
-        dd($chResult);
         $jsonDecodeResult = json_decode($chResult);
 
         //-- Cek apakah ada error dari OVO Response
