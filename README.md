@@ -6,7 +6,20 @@
 </p>
 <h2 align="center">Un-Official ovoid API Wrapper</h2>
 
-Telah di test pada OVO versi 2.8.0 | 1 Maret 2019
+Telah di test pada OVO versi 2.8.0 | 27 Maret 2019 | PHP 7.2.2
+
+| Method  | Result  |
+|---|---|
+| `login2FA`  | OK |
+| `login2FAVerify`  | OK |
+| `loginSecurityCode`  | OK  |
+| `getBudget`  | OK  |
+| `balanceModel`  | OK  |
+| `logout`  | OK  |
+| `unreadHistory`  | OK  |
+| `getWalletTransaction`  | OK  |
+| `generateTrxId`  | OK  |
+| `transferOvo`  | Invalid Model / Hubungi CS  |
 
 ## Install
 `composer require lintangtimur/ovoid`
