@@ -37,7 +37,7 @@ class Curl implements HTTPClient
             array_push($tempHeaders, $key . ': ' . $value);
         }
         $headers = array_merge($headerJson, $tempHeaders);
-
+        
         curl_setopt($this->ch, CURLOPT_URL, $url);
         curl_setopt($this->ch, CURLOPT_POST, true);
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -61,6 +61,15 @@ class Curl implements HTTPClient
      */
     public function get($url, $data, $headers)
     {
+        $headerJson = ['Content-Type: application/json;charset=UTF-8'];
+
+        $tempHeaders = [];
+
+        foreach ($headers as $key => $value) {
+            array_push($tempHeaders, $key . ': ' . $value);
+        }
+        $headers = array_merge($headerJson, $tempHeaders);
+
         curl_setopt($this->ch, CURLOPT_URL, $url);
         curl_setopt($this->ch, CURLOPT_POST, false);
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, 'GET');

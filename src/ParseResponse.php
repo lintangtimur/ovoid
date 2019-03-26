@@ -18,7 +18,8 @@ class ParseResponse
         OVOID::BASE_ENDPOINT . 'v1.0/api/customers/transfer'                     => 'Stelin\Response\CustomerTransferResponse',
         OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/genTrxId'                 => 'Stelin\Response\GenTrxIdResponse',
         OVOID::BASE_ENDPOINT . 'v1.0/notification/status/count/UNREAD'           => 'Stelin\Response\NotificationUnreadResponse',
-        OVOID::BASE_ENDPOINT . 'v1.0/notification/status/all'                    => 'Stelin\Response\NotificationAllResponse'
+        OVOID::BASE_ENDPOINT . 'v1.0/notification/status/all'                    => 'Stelin\Response\NotificationAllResponse',
+        OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/logout'                   => 'Stelin\Response\LogoutResponse'
     ];
 
     private $response;
@@ -31,10 +32,12 @@ class ParseResponse
      */
     public function __construct($chResult, $url)
     {
+        dd($chResult);
         $jsonDecodeResult = json_decode($chResult);
 
+        //-- Cek apakah ada error dari OVO Response
         if (isset($jsonDecodeResult->code)) {
-            throw new \Stelin\Exception\OvoidException($jsonDecodeResult->message);
+            throw new \Stelin\Exception\OvoidException($jsonDecodeResult->message . ' ' . $url);
         }
 
         $parts = parse_url($url);

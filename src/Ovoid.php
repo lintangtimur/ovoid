@@ -102,7 +102,8 @@ class OVOID
         $data = [
             'deviceUnixtime'   => 1543693061,
             'securityCode'     => $securityCode,
-            'updateAccessToken'=> $updateAccessToken
+            'updateAccessToken'=> $updateAccessToken,
+            'message'          => ''
         ];
 
         return $ch->post(OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/loginSecurityCode/verify', $data, $this->headers)->getResponse();
@@ -179,13 +180,27 @@ class OVOID
     }
 
     /**
+     * logout from OVO
+     *
+     * @return void
+     */
+    public function logout()
+    {
+        $ch = new Curl;
+
+        return $ch->get(OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/logout', null, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
      * Add Authorization token
      *
      * @return array
      */
     private function _aditionalHeader()
     {
-        return ['Authorization: ' . $this->authToken];
+        $temp = ['Authorization'=> $this->authToken];
+
+        return array_merge($temp, $this->headers);
     }
 
     /**
@@ -215,8 +230,8 @@ class OVOID
     /**
      * Wallet Transaction
      *
-     * @param int $page halaman ke berapa
-     * @param int $limit berapa kontent dalam 1 page
+     * @param  int                                        $page  halaman ke berapa
+     * @param  int                                        $limit berapa kontent dalam 1 page
      * @return \Stelin\Response\WalletTransactionResponse
      */
     public function getWalletTransaction($page, $limit = 10)
@@ -224,7 +239,7 @@ class OVOID
         $ch = new Curl;
 
         return $ch->get(
-            OVOID::BASE_ENDPOINT . 'wallet/v2/transaction?page='.$page.'&limit='.$limit.'&productType=001',
+            OVOID::BASE_ENDPOINT . 'wallet/v2/transaction?page=' . $page . '&limit=' . $limit . '&productType=001',
             null,
             $this->_aditionalHeader()
         )->getResponse();

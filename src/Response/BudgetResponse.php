@@ -11,11 +11,11 @@ class BudgetResponse
 
     public function __construct($decoded)
     {
-        $key = array_keys($decoded);
+        $key = array_keys((array)$decoded);
         for ($i = 0; $i < count($key); $i++) {
 
             $keyPriv = $key[$i];
-            $this->$keyPriv = $decoded[$key[$i]];
+            $this->$keyPriv = ((array)$decoded)[$key[$i]];
         }
     }
 
@@ -26,7 +26,7 @@ class BudgetResponse
      */
     public function getBudgetAmount()
     {
-        return $this->budget['amount'];
+        return $this->budget->amount;
     }
 
     /**
@@ -36,7 +36,7 @@ class BudgetResponse
      */
     public function getBudgetSpending()
     {
-        return $this->budget['spending'];
+        return $this->budget->spending;
     }
 
     /**
