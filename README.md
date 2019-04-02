@@ -21,6 +21,21 @@ Telah di test pada OVO versi 2.8.0 | 27 Maret 2019 | PHP 7.2.2
 | `generateTrxId`  | OK  |
 | `transferOvo`  | Invalid Model / Hubungi CS  |
 
+## PORTS
+Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ingin menulis dibahasa tersebut silahkan ajukan Issue baru nanti akan saya list disini
+
+### Python
+- [@anysz/ovopy](https://github.com/anysz/ovopy) by [anysz](https://github.com/anysz)
+
+### GO
+- 
+
+### Java
+- 
+
+### Javascript / nodejs
+-
+
 ## Install
 `composer require lintangtimur/ovoid`
 
@@ -114,6 +129,7 @@ Contoh: `$ovo->unreadHistory()->getTotal()`
 
 ## TODO
 - [x] cek mutasi
+
 
 ## Contribute
 Project ini saya membuatnya kasaran sekali, jadi ketika ada proses request ke endpoint ovo dan terjadi kegagalan atau parameter tidak sesuai, script masih belum bisa mendapatkan response error dari ovo nya, harus manual `dd` dari source code(dari file Response). Jadi silahkan berkontribusi, baik dari dokumentasi program atau membenahi script ini :)
