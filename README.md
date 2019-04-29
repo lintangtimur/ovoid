@@ -22,7 +22,7 @@ echo $ovoid->login2FA('<mobilePhone>')->getRefId());
 ```
 ### second step
 ```php
-echo $ovoid->login2FAVerify('<refId>', '<OTP code>', '<mobilePhone>')->getUdateAccessToken();
+echo $ovoid->login2FAVerify('<refId>', '<OTP code>', '<mobilePhone>')->getUpdateAccessToken();
 ```
 ### third step
 ```php
