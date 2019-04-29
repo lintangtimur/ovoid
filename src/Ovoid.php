@@ -55,7 +55,7 @@ class OVOID
         ];
 
         $data = [
-            'deviceId' => Meta::DEVICE_ID,
+            'deviceId' => gen_uuid(),
             'mobile'   => $mobile_phone
         ];
 
@@ -76,7 +76,7 @@ class OVOID
 
         $data = [
             'appVersion'        => Meta::APP_VERSION,
-            'deviceId'          => Meta::DEVICE_ID,
+            'deviceId'          => gen_uuid(),
             'macAddress'        => Meta::MAC_ADDRESS,
             'mobile'            => $mobilePhone,
             'osName'            => Meta::OS_NAME,
