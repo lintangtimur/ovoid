@@ -19,6 +19,8 @@ class OVOID
      */
     const BASE_ENDPOINT = 'https://api.ovo.id/';
 
+    const AWS = 'https://apigw01.aws.ovo.id/';
+
     /**
      * Authorization Token
      *
@@ -243,5 +245,117 @@ class OVOID
             null,
             $this->_aditionalHeader()
         )->getResponse();
+    }
+
+    /**
+     * Billpay
+     *
+     * @return \Stelin\Response\BillpayResponse
+     */
+    public function getBillers()
+    {
+        $ch = new Curl;
+
+        return $ch->get(OVOID::AWS . 'gpdm/ovo/ID/v2/billpay/get-billers?categoryID=5C6', null, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * get denomination
+     *
+     * @param  int                                   $product_id product_id can be found from getBillers() endpoint
+     * @return \Stelin\Response\DenominationsReponse
+     */
+    public function getDenominationByProductId($product_id)
+    {
+        $ch = new Curl;
+
+        return $ch->get(OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/get-denominations/' . $product_id, null, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * bayar
+     *
+     * @param  string                           $billerId   get this from getBillers()
+     * @param  string                           $customerId phone number
+     * @param  string                           $denomId    get this from getDenominationByProductId()
+     * @param  string                           $productId  get this from getBillers()
+     * @return \Stelin\Response\InquiryResponse
+     */
+    public function inquiry($billerId, $customerId, $denomId, $productId)
+    {
+        $ch = new Curl;
+        $data = [
+            'biller_id'       => (string)$billerId,
+            'customer_id'     => $customerId,
+            'denomination_id' => $denomId,
+            'payment_method'  => [
+                '001'
+            ],
+            'phone_number'=> $customerId,
+            'product_id'  => (string)$productId,
+            'period'      => 0
+        ];
+
+        return $ch->post(OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/inquiry', $data, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * setelah menjalankan fungsi inquiry() lakukan fungsi customerUnlock
+     *
+     * @param  string $securityCode
+     * @return void
+     */
+    public function customerUnlock($securityCode)
+    {
+        $ch = new Curl;
+        $data = [
+            'appVersion'  => '2.8.0',
+            'securityCode'=> $securityCode
+        ];
+
+        return $ch->post(OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/unlock', $data, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * pay
+     *
+     * @param  string                       $billerId
+     * @param  string                       $customerId
+     * @param  string                       $oder_id
+     * @param  string                       $productId
+     * @return \Stelin\Response\PayResponse
+     */
+    public function pay($billerId, $customerId, $order_id, $productId)
+    {
+        $ch = new Curl;
+        $data = [
+            'biller_id'     => $billerId,
+            'customer_id'   => $customerId,
+            'order_id'      => $order_id,
+            'payment_method'=> [
+                '001'
+            ],
+            'phone_number'=> $customerId,
+            'product_id'  => $productId
+        ];
+
+        return $ch->post(OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/pay', $data, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * get PayCheckStatusResponse
+     *
+     * @param  string                                  $oderId orderId reference
+     * @return \Stelin\Response\PayCheckStatusResponse
+     */
+    public function payCheckStatus($orderId)
+    {
+        $ch = new Curl;
+
+        $data = [
+            'order_reference' => $orderId
+        ];
+
+        return $ch->post(OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/checkstatus', $data, $this->_aditionalHeader())->getResponse();
     }
 }
