@@ -19,7 +19,7 @@ Telah di test pada OVO versi 2.8.0 | 27 Maret 2019 | PHP 7.2.2
 | `unreadHistory`  | OK  |
 | `getWalletTransaction`  | OK  |
 | `generateTrxId`  | OK  |
-| `transferOvo`  | Invalid Model / Hubungi CS  |
+| `transferOvo`  | OK  |
 
 ## PORTS
 Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ingin menulis dibahasa tersebut silahkan ajukan Issue baru nanti akan saya list disini
