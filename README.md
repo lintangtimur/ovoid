@@ -127,8 +127,27 @@ disitu ada hardcode productType 001, bisa dicoba sendiri itu efek terhadap apa, 
 ```
 Contoh: `$ovo->unreadHistory()->getTotal()`
 
+### Transfer Antar Bank
+```php
+
+    /**
+     * transer antar bank
+     *
+     * @param  string                                  $accountName          nama akun
+     * @param  string                                  $accountNo            No akun OVO Cash
+     * @param  string                                  $accountNoDestination No rekening yang dituju
+     * @param  int                                     $amount               jumlah yang akan ditransfer
+     * @param  string                                  $bankCode             kode bank yang dituju
+     * @param  string                                  $bankName             nama bank
+     * @param  string                                  $message
+     * @param  string                                  $notes
+     * @return \Stelin\Response\TransferDirectResponse
+     */
+    public function transferBank($accountName, $accountNo, $accountNoDestination, $amount, $bankCode, $bankName, $message, $notes)
+```
+
 ## TODO
-- [x] cek mutasi
+- [ ] Signature Header untuk transfer sesama OVO lebih dari 2x
 
 
 ## Contribute
