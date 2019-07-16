@@ -24,7 +24,10 @@ class ParseResponse
         OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/inquiry'                                 => 'Stelin\Response\InquiryResponse',
         OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/unlock'                        => 'Stelin\Response\CustomerUnlockResponse',
         OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/pay'                                     => 'Stelin\Response\PayResponse',
-        OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/checkstatus'                             => 'Stelin\Response\PayCheckStatusResponse'
+        OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/checkstatus'                             => 'Stelin\Response\PayCheckStatusResponse',
+        OVOID::BASE_ENDPOINT . 'v1.0/reference/master/ref_bank'                       => 'Stelin\Response\Ref_BankResponse',
+        OVOID::BASE_ENDPOINT . 'transfer/inquiry'                                     => 'Stelin\Response\TransferInquiryResponse',
+        OVOID::BASE_ENDPOINT . 'transfer/direct'                                      => 'Stelin\Response\TransferDirectResponse'
     ];
 
     private $response;
@@ -38,7 +41,6 @@ class ParseResponse
     public function __construct($chResult, $url)
     {
         $jsonDecodeResult = json_decode($chResult);
-
         //-- Cek apakah ada error dari OVO Response
         if (isset($jsonDecodeResult->code)) {
             throw new \Stelin\Exception\OvoidException($jsonDecodeResult->message . ' ' . $url);

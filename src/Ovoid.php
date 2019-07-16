@@ -4,6 +4,7 @@ namespace Stelin;
 
 use Stelin\HTTP\Curl;
 use Stelin\Meta\Meta;
+use Stelin\Meta\ActionMark;
 
 /**
  * OVOID
@@ -140,11 +141,16 @@ class OVOID
     /**
      * kirim cash sesama OVO
      *
-     * @param  string                                   $to_mobilePhone
-     * @param  int                                      $amount
-     * @param  string                                   $message
+     * Dapat dilakukan sebanyak 2kali, ketika ingin transfer lebih dari 2kali tidak bisa dilakukan
+     * karena membutuhkan Signature Header berupa SHA1 untuk memvalidasi TrxId
+     * UnlockAndValidateTrxId
+     * WARNING:
+     *
+     * @param  string                                    $to_mobilePhone
+     * @param  int                                       $amount
+     * @param  string                                    $message
      * @throws \Stelin\Exception\AmountException
-     * @return \Stelin\Reponse\CustomerTransferResponse
+     * @return \Stelin\Response\CustomerTransferResponse
      */
     public function transferOvo($to_mobilePhone, $amount, $message = null)
     {
@@ -157,24 +163,97 @@ class OVOID
             'to'       => $to_mobilePhone,
             'amount'   => $amount,
             'message'  => $message ? null : '',
-            'trxId'    => $this->generateTrxId($to_mobilePhone, $amount)->getTrxId()
+            'trxId'    => $this->generateTrxId($amount, ActionMark::TRANSFER_OVO)->getTrxId()
         ];
 
         return $ch->post(OVOID::BASE_ENDPOINT . 'v1.0/api/customers/transfer', $data, $this->_aditionalHeader())->getResponse();
     }
 
     /**
+     * transer antar bank
+     *
+     * @param  string                                  $accountName          nama akun
+     * @param  string                                  $accountNo            No akun OVO Cash
+     * @param  string                                  $accountNoDestination No rekening yang dituju
+     * @param  int                                     $amount               jumlah yang akan ditransfer
+     * @param  string                                  $bankCode             kode bank yang dituju
+     * @param  string                                  $bankName             nama bank
+     * @param  string                                  $message
+     * @param  string                                  $notes
+     * @return \Stelin\Response\TransferDirectResponse
+     */
+    public function transferBank($accountName, $accountNo, $accountNoDestination, $amount, $bankCode, $bankName, $message, $notes)
+    {
+        if ($amount < 10000) {
+            throw new \Stelin\Exception\AmountException('Minimal 10.000');
+        }
+
+        $ch = new Curl;
+
+        $data = [
+            'accountName'           => $accountName,
+            'accountNo'             => $accountNo,
+            'accountNoDestination'  => $accountNoDestination,
+            'amount'                => $amount,
+            'bankCode'              => $bankCode,
+            'bankName'              => $bankName,
+            'message'               => $message,
+            'notes'                 => $notes,
+            'transactionId'         => $this->generateTrxId($amount, ActionMark::TRANSFER_BANK)->getTrxId()
+        ];
+
+        return $ch->post(OVOID::BASE_ENDPOINT . 'transfer/direct', $data, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * transfer inquiry
+     *
+     * @param  string                                   $accountNo no rekening yang dituju
+     * @param  int                                      $amount    jumlah yang akan ditransfer
+     * @param  string                                   $bankCode  kode bank yang dituju
+     * @param  string                                   $bankName  nama bank yang dituju
+     * @param  string                                   $message
+     * @return \Stelin\Response\TransferInquiryResponse
+     */
+    public function transferInquiry($accountNo, $amount, $bankCode, $bankName, $message)
+    {
+        $ch = new Curl;
+
+        $data = [
+            'accountNo'=> $accountNo,
+            'amount'   => $amount,
+            'bankCode' => $bankCode,
+            'bankName' => $bankName,
+            'message'  => $message
+        ];
+
+        return $ch->post(OVOID::BASE_ENDPOINT . 'transfer/inquiry', $data, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * Get Bank Reference
+     *
+     * @return \Stelin\Response\Ref_BankResponse
+     */
+    public function getRefBank()
+    {
+        $ch = new Curl;
+
+        return $ch->get(OVOID::BASE_ENDPOINT . 'v1.0/reference/master/ref_bank', null, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
      * generate trxid
      *
-     * @param  string                            $mobilePhone
      * @param  int                               $amount
+     * @param  \Stelin\Meta\ActionMark           $actionMark
      * @return \Stelin\Response\GenTrxIdResponse
      */
-    private function generateTrxId($mobilePhone, $amount)
+    private function generateTrxId($amount, $actionMark)
     {
         $ch = new Curl;
         $data = [
-            'actionMark' => 'trf_ovo',
+            'actionMark' => $actionMark,
             'amount'     => $amount
         ];
 
