@@ -84,10 +84,9 @@ dd($ovoid->modelBalance()->getBalance()->getCardNo()('OVO'));
 
 ## Transfer Sesama OVO
 <pre>
-Belum di test di OVO 2.8.0
-Telah di test di OVO 2.5.*
+Telah di test di OVO 2.8.0
 </pre>
-
+Sebelum transfer silahkan cek akunnya benar atau tidak dengan method ```isOVO()```, lalu jalankan method dibawah
 ```php
 public function transferOvo($to_mobilePhone, $amount, $message = null)
 ```
