@@ -27,7 +27,8 @@ class ParseResponse
         OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/checkstatus'                             => 'Stelin\Response\PayCheckStatusResponse',
         OVOID::BASE_ENDPOINT . 'v1.0/reference/master/ref_bank'                       => 'Stelin\Response\Ref_BankResponse',
         OVOID::BASE_ENDPOINT . 'transfer/inquiry'                                     => 'Stelin\Response\TransferInquiryResponse',
-        OVOID::BASE_ENDPOINT . 'transfer/direct'                                      => 'Stelin\Response\TransferDirectResponse'
+        OVOID::BASE_ENDPOINT . 'transfer/direct'                                      => 'Stelin\Response\TransferDirectResponse',
+        OVOID::BASE_ENDPOINT . 'v1.1/api/auth/customer/isOVO'                          => 'Stelin\Response\isOVOResponse'
     ];
 
     private $response;

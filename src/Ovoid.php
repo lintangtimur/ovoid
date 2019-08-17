@@ -152,7 +152,7 @@ class OVOID
      * @throws \Stelin\Exception\AmountException
      * @return \Stelin\Response\CustomerTransferResponse
      */
-    public function transferOvo($to_mobilePhone, $amount, $message = null)
+    public function transferOvo($to_mobilePhone, $amount, $message = "")
     {
         if ($amount < 10000) {
             throw new \Stelin\Exception\AmountException('Minimal 10.000');
@@ -160,13 +160,35 @@ class OVOID
 
         $ch = new Curl;
         $data = [
-            'to'       => $to_mobilePhone,
             'amount'   => $amount,
-            'message'  => $message ? null : '',
+            'message'  => $message == "" ? 'Sent from OVOID' : $message,
+            'to'       => $to_mobilePhone,
             'trxId'    => $this->generateTrxId($amount, ActionMark::TRANSFER_OVO)->getTrxId()
         ];
 
         return $ch->post(OVOID::BASE_ENDPOINT . 'v1.0/api/customers/transfer', $data, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * check apakah OVO
+     * 
+     * Hasil dari method ini untuk mengecek atau memverifikasi apakah sudah benar
+     * yang mau ditransfer benar akun tersebut apa tidak
+     * silahkan di cek dengan getIsOVOResponse
+     *
+     * @param  int                            $totalAmount jumlah yang dikirim
+     * @param  string                         $mobilePhone nomor yang dituju
+     * @return \Stelin\Response\isOVOResponse
+     */
+    public function isOVO($totalAmount, $mobilePhone)
+    {
+        $ch = new Curl;
+        $data = [
+            'totalAmount' => $totalAmount,
+            'mobile'      => $mobilePhone
+        ];
+
+        return $ch->post(OVOID::BASE_ENDPOINT . 'v1.1/api/auth/customer/isOVO', $data, $this->_aditionalHeader())->getResponse();
     }
 
     /**
