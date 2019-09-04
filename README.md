@@ -34,7 +34,7 @@ Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ing
 - 
 
 ### Javascript / nodejs
--
+- [@apriady/ovoid-nodejs](https://github.com/apriady/ovoid-nodejs) by [apriady](https://github.com/apriady)
 
 ## Install
 `composer require lintangtimur/ovoid`
