@@ -3,7 +3,9 @@
 <a href="https://packagist.org/packages/lintangtimur/ovoid"><img src="https://img.shields.io/packagist/v/lintangtimur/ovoid.svg?style=popout-square"></a>
   <a href="https://github.com/lintangtimur/ovoid/blob/master/LICENSE"><img src="https://img.shields.io/github/license/lintangtimur/ovoid.svg?style=popout-square"></a>
   <a class="badge-align" href="https://www.codacy.com/app/lintangtimur/ovoid?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lintangtimur/ovoid&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/9699ecb8baf64fdb94692b90b01c73b1"/></a>
+  <img alt="Packagist" src="https://img.shields.io/packagist/dt/lintangtimur/ovoid?style=flat-square">
 </p>
+
 <h2 align="center">Un-Official ovoid API Wrapper</h2>
 
 Telah di test pada OVO versi 2.8.0 | 27 Maret 2019 | PHP 7.2.2
@@ -34,7 +36,7 @@ Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ing
 - 
 
 ### Javascript / nodejs
--
+- [@apriady/ovoid-nodejs](https://github.com/apriady/ovoid-nodejs) by [apriady](https://github.com/apriady)
 
 ## Install
 `composer require lintangtimur/ovoid`

@@ -410,7 +410,7 @@ class OVOID
     {
         $ch = new Curl;
         $data = [
-            'appVersion'  => '2.8.0',
+            'appVersion'  => Meta::APP_VERSION,
             'securityCode'=> $securityCode
         ];
 
