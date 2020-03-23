@@ -33,10 +33,13 @@ Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ing
 - [@anysz/ovopy](https://github.com/anysz/ovopy) by [anysz](https://github.com/anysz)
 
 ### GO
-- 
+- [@adibaulia/ovoid-go](https://github.com/adibaulia/ovoid-go) by [adibaulia](https://github.com/adibaulia)
 
 ### Java
 - 
+
+### Ruby
+- [@namdevel/ovoid-ruby](https://github.com/namdevel/ovoid-ruby) by [namdevel](https://github.com/namdevel)
 
 ### Javascript / nodejs
 - [@apriady/ovoid-nodejs](https://github.com/apriady/ovoid-nodejs) by [apriady](https://github.com/apriady)
