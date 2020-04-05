@@ -32,6 +32,9 @@ Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ing
 ### Python
 - [@anysz/ovopy](https://github.com/anysz/ovopy) by [anysz](https://github.com/anysz)
 
+### Flutter
+- [@maulana20/ovoid-flutter](https://github.com/maulana20/ovoid-flutter) by [maulana20](https://github.com/maulana20)
+
 ### GO
 - [@adibaulia/ovoid-go](https://github.com/adibaulia/ovoid-go) by [adibaulia](https://github.com/adibaulia)
 
