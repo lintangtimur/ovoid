@@ -57,7 +57,7 @@ require 'vendor/autoload.php';
 use Stelin\OVOID;
 
 $ovoid = new OVOID();
-echo $ovoid->login2FA('<mobilePhone>')->getRefId());
+echo $ovoid->login2FA('<mobilePhone>')->getRefId();
 ```
 ### second step
 ```php
