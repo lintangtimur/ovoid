@@ -5,6 +5,7 @@
   <a class="badge-align" href="https://www.codacy.com/app/lintangtimur/ovoid?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lintangtimur/ovoid&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/9699ecb8baf64fdb94692b90b01c73b1"/></a>
   <img alt="Packagist" src="https://img.shields.io/packagist/dt/lintangtimur/ovoid?style=flat-square">
 <img alt="patreons" src="https://img.shields.io/endpoint?url=https://shieldsio-patreon.herokuapp.com/lintangtimur&style=flat">
+  <a href="http://hits.dwyl.com/lintangtimur/ovoid"><img alt="hitcount" src="http://hits.dwyl.com/lintangtimur/ovoid.svg&style=flat"></a>
 </p>
 
 
