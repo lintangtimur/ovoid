@@ -80,7 +80,7 @@ class OVOID
         $data = [
             'appVersion'        => Meta::APP_VERSION,
             'deviceId'          => gen_uuid(),
-            'macAddress'        => Meta::MAC_ADDRESS,
+            'macAddress'        => gen_mac(),
             'mobile'            => $mobilePhone,
             'osName'            => Meta::OS_NAME,
             'osVersion'         => Meta::OS_VERSION,
@@ -152,7 +152,7 @@ class OVOID
      * @throws \Stelin\Exception\AmountException
      * @return \Stelin\Response\CustomerTransferResponse
      */
-    public function transferOvo($to_mobilePhone, $amount, $message = "")
+    public function transferOvo($to_mobilePhone, $amount, $message = '')
     {
         if ($amount < 10000) {
             throw new \Stelin\Exception\AmountException('Minimal 10.000');
@@ -161,7 +161,7 @@ class OVOID
         $ch = new Curl;
         $data = [
             'amount'   => $amount,
-            'message'  => $message == "" ? 'Sent from OVOID' : $message,
+            'message'  => $message == '' ? 'Sent from OVOID' : $message,
             'to'       => $to_mobilePhone,
             'trxId'    => $this->generateTrxId($amount, ActionMark::TRANSFER_OVO)->getTrxId()
         ];
@@ -171,7 +171,7 @@ class OVOID
 
     /**
      * check apakah OVO
-     * 
+     *
      * Hasil dari method ini untuk mengecek atau memverifikasi apakah sudah benar
      * yang mau ditransfer benar akun tersebut apa tidak
      * silahkan di cek dengan getIsOVOResponse
