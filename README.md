@@ -4,11 +4,15 @@
   <a href="https://github.com/lintangtimur/ovoid/blob/master/LICENSE"><img src="https://img.shields.io/github/license/lintangtimur/ovoid.svg?style=popout-square"></a>
   <a class="badge-align" href="https://www.codacy.com/app/lintangtimur/ovoid?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lintangtimur/ovoid&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/9699ecb8baf64fdb94692b90b01c73b1"/></a>
   <img alt="Packagist" src="https://img.shields.io/packagist/dt/lintangtimur/ovoid?style=flat-square">
+<img alt="patreons" src="https://img.shields.io/endpoint?url=https://shieldsio-patreon.herokuapp.com/lintangtimur&style=flat">
+  <a href="http://hits.dwyl.com/lintangtimur/ovoid"><img alt="hitcount" src="http://hits.dwyl.com/lintangtimur/ovoid.svg&style=flat"></a>
 </p>
+
 
 <h2 align="center">Un-Official ovoid API Wrapper</h2>
 
 Telah di test pada OVO versi 2.8.0 | 27 Maret 2019 | PHP 7.2.2
+
 
 | Method  | Result  |
 |---|---|
@@ -29,11 +33,17 @@ Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ing
 ### Python
 - [@anysz/ovopy](https://github.com/anysz/ovopy) by [anysz](https://github.com/anysz)
 
+### Flutter
+- [@maulana20/ovoid-flutter](https://github.com/maulana20/ovoid-flutter) by [maulana20](https://github.com/maulana20)
+
 ### GO
-- 
+- [@adibaulia/ovoid-go](https://github.com/adibaulia/ovoid-go) by [adibaulia](https://github.com/adibaulia)
 
 ### Java
 - 
+
+### Ruby
+- [@namdevel/ovoid-ruby](https://github.com/namdevel/ovoid-ruby) by [namdevel](https://github.com/namdevel)
 
 ### Javascript / nodejs
 - [@apriady/ovoid-nodejs](https://github.com/apriady/ovoid-nodejs) by [apriady](https://github.com/apriady)
@@ -48,7 +58,7 @@ require 'vendor/autoload.php';
 use Stelin\OVOID;
 
 $ovoid = new OVOID();
-echo $ovoid->login2FA('<mobilePhone>')->getRefId());
+echo $ovoid->login2FA('<mobilePhone>')->getRefId();
 ```
 ### second step
 ```php
