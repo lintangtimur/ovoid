@@ -41,3 +41,13 @@ function gen_uuid()
         mt_rand(0, 0xffff)
     );
 }
+
+/**
+ * generate random MAC Address
+ *
+ * @return string
+ */
+function gen_mac()
+{
+    return implode(':', str_split(substr(md5(mt_rand()), 0, 12), 2));
+}
