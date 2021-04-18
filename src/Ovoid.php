@@ -311,6 +311,7 @@ class OVOID
         $data = [
             'trxId' => $trxId,
             'signature' => $this->signatureUnlockAndValidateTrxId($trxId, $amount),
+            'appVersion' => Meta::APP_VERSION,
             'securityCode' => $securityCode
         ];
 
