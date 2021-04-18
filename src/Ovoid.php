@@ -283,6 +283,41 @@ class OVOID
     }
 
     /**
+     * Signature unlockAndValidateTrxId
+     * 
+     * @param \Stelin\Response\GenTrxIdResponse
+     * @param int $amount
+     * @return string
+     */
+    private function signatureUnlockAndValidateTrxId($trxId, $amount)
+    {
+        return sha1(
+            $trxId . '||' . $amount . '||' . Meta::DEVICE_ID
+        );
+    }
+    
+    /**
+     * unlockAndValidateTrxId
+     * 
+     * @param int $amount
+     * @param \Stelin\Response\GenTrxIdResponse
+     * @param string $securityCode
+     * @return array
+     */
+    protected function unlockAndValidateTrxId($trxId, $amount, $securityCode)
+    {
+        $ch = new Curl;
+
+        $data = [
+            'trxId' => $trxId,
+            'signature' => $this->signatureUnlockAndValidateTrxId($trxId, $amount),
+            'securityCode' => $securityCode
+        ];
+
+        return $ch->post(OVOID::BASE_ENDPOINT, 'v1.0/api/auth/customer/unlockAndValidateTrxId', $data, $this->_aditionalHeader()->getResponse());
+    }      
+
+    /**
      * logout from OVO
      *
      * @return void
