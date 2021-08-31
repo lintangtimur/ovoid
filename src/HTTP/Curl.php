@@ -36,8 +36,8 @@ class Curl implements HTTPClient
         foreach ($headers as $key => $value) {
             array_push($tempHeaders, $key . ': ' . $value);
         }
-        $headers = array_merge($headerJson, $tempHeaders);
         
+        $headers = array_merge($headerJson, $tempHeaders);
         curl_setopt($this->ch, CURLOPT_URL, $url);
         curl_setopt($this->ch, CURLOPT_POST, true);
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, 'POST');

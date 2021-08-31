@@ -1,5 +1,4 @@
 <?php
-
 namespace Stelin;
 
 use Stelin\HTTP\Curl;
@@ -19,8 +18,8 @@ class OVOID
      * Base OVO ENDPOINT
      */
     const BASE_ENDPOINT = 'https://api.ovo.id/';
-
-    const AWS = 'https://apigw01.aws.ovo.id/';
+    const AWS           = 'https://apigw01.aws.ovo.id/';
+    const OVO_API_AWS   = 'https://agw.ovo.id/';
 
     /**
      * Authorization Token
@@ -28,16 +27,157 @@ class OVOID
      * @var string
      */
     private $authToken;
+    private $deviceId;
 
     private $headers = [
-        'app-id'      => Meta::APP_ID,
-        'App-Version' => Meta::APP_VERSION,
-        'OS'          => Meta::OS_NAME
+        'OS'        => 'Android',
+        'OS-Version'=> '9.0',
+        'client-id' => 'ovo_android',
+        'device-id' => '87586011-0127-3469-aa2a-6016a68d45f6',
+        'host'      => 'agw.ovo.id',
+        // 'App-Version' => Meta::APP_VERSION,
+        'User-Agent' => 'okhttp/4.9.0',
+        // 'Connection'=> 'close',
+        // "Accept-Encoding" => "gzip, deflate"
     ];
 
-    public function __construct($authToken = null)
+    private function getDeviceId()
+    {
+        return $this->deviceId;
+    }
+
+    /**
+     * OVOID
+     *
+     * @param string $authToken
+     * @param string $deviceId
+     */
+    public function __construct($authToken = null, $deviceId)
     {
         $this->authToken = $authToken;
+        $this->deviceId  = $deviceId;
+    }
+
+    /**
+     * Kirim OTP
+     *
+     * @param string $noTelp
+     * @return \Stelin\Response\OTPResponse
+     */
+    public function OTP($noTelp)
+    {
+        $ch      = new Curl;
+
+        $data = [
+            'channel_code'=> 'ovo_android',
+            'device_id'   => '87586011-0127-3469-aa2a-6016a68d45f6',
+            'msisdn'      => $noTelp,
+            'otp'         => [
+                'locale'  => 'ID',
+                'sms_hash'=> 'm9mj4ctIVR8'
+            ]
+        ];
+
+        return $ch->post(OVOID::OVO_API_AWS . 'v3/user/accounts/otp', $data, $this->headers)->getResponse();
+    }
+
+    /**
+     * OTP Validation
+     *
+     * @param string $noTelp
+     * @param string $otpRefId
+     * @param string $otp
+     * @return \Stelin\Response\OTPValidationResponse
+     */
+    public function OTPValidation($noTelp, $otpRefId, $otp)
+    {
+        $ch = new Curl;
+
+        $data = [
+            'channel_code'=> 'ovo_android',
+            'device_id'   => '87586011-0127-3469-aa2a-6016a68d45f6',
+            'msisdn'      => $noTelp,
+            'otp'         => [
+                'otp'       => $otp,
+                'otp_ref_id'=> $otpRefId,
+                'type'      => 'LOGIN'
+            ]
+        ];
+
+        return $ch->post(OVOID::OVO_API_AWS . 'v3/user/accounts/otp/validation', $data, $this->headers)->getResponse();
+    }
+
+    /**
+     * Mendapatkan public key untuk enkripsi proses berikutnya
+     *
+     * @return \Stelin\Response\PublicKeyResponse
+     */
+    public function getPublicKeys()
+    {
+        $ch      = new Curl;
+        $headers = [
+            'OS'         => 'Android',
+            'OS-Version' => '9.0',
+            'client-id'  => 'ovo_android',
+            'device-id'  => '87586011-0127-3469-aa2a-6016a68d45f6',
+            'host'       => 'agw.ovo.id',
+            'User-Agent' => 'okhttp/4.9.0',
+            'Connection' => 'close',
+        ];
+        return $ch->get(OVOID::OVO_API_AWS . 'v3/user/public_keys', null, $this->headers)->getResponse();
+    }
+
+    /**
+     * Login
+     *
+     * @param string $noTelp format +62xxxx
+     * @param string $otpRefId
+     * @param string $otpToken
+     * @param string $securityCode 6 digit security code
+     * @return \Stelin\Response\AccountLoginResponse
+     */
+    public function accountLogin($noTelp, $otpRefId, $otpToken, $securityCode)
+    {
+        $ch = new Curl;
+
+        $data = [
+            'channel_code'=> 'ovo_android',
+            'device_id'   => '87586011-0127-3469-aa2a-6016a68d45f6',
+            'credentials' => [
+                'otp_token'=> $otpToken,
+                'password' => [
+                    'format' => 'rsa',
+                    'value'  => $this->_encryptPassword($noTelp, $otpRefId, $securityCode) . "\n"
+                ]
+            ],
+            'msisdn'               => $noTelp,
+            'push_notification_id' => 'fs-DYcGaRbKERLhF4hkQ92:APA91bEjjUFzzFvadIKtdrrqsyrGH26xLRR5-Oyym2l9Ybv0O1cnvqA14ghuTbXz0ogazN-Kw6iGxW2klakANBaVXoFCLrT4hWJJ5FCGOz2o5bGE7RX6XpxndNkcxnqpWat449vBvYSa'
+        ];
+
+        return $ch->post(OVOID::OVO_API_AWS . 'v3/user/accounts/login', $data, $this->headers)->getResponse();
+    }
+
+    /**
+     * encrypt
+     *
+     * @param string $noTelp format +62xxxx
+     * @param string $otpRefId
+     * @param string $securityCode 6 digit security code
+     * @return string
+     */
+    private function _encryptPassword($noTelp, $otpRefId, $securityCode)
+    {
+        $publicKey = $this->getPublicKeys()->getData()->getKeys()[0]->key;
+
+        // $publicKey = str_replace("\n","",$publicKey);
+
+        // dd($publicKey);
+        $deviceId             = '87586011-0127-3469-aa2a-6016a68d45f6';
+        $currentTimeInMillies = '1629220160';
+        $payload              = "LOGIN|{$securityCode}|{$currentTimeInMillies}|{$deviceId}|{$noTelp}|{$deviceId}|{$otpRefId}";
+        \openssl_public_encrypt($payload, $encrypted, $publicKey);
+
+        return \base64_encode($encrypted);
     }
 
     /**
@@ -51,8 +191,12 @@ class OVOID
      */
     public function login2FA($mobile_phone)
     {
-        $ch = new Curl;
+        $ch      = new Curl;
         $headers = [
+            'OS'          => 'Android',
+            'OS-Version'  => '7.1.1',
+            'client-id'   => 'ovo_android',
+            'device-id'   => '87586011-0127-3469-aa2a-6016a68d45f6',
             'app-id'      => Meta::APP_ID,
             'App-Version' => Meta::APP_VERSION
         ];
@@ -101,7 +245,7 @@ class OVOID
      */
     public function loginSecurityCode($securityCode, $updateAccessToken)
     {
-        $ch = new Curl;
+        $ch   = new Curl;
         $data = [
             'deviceUnixtime'   => 1543693061,
             'securityCode'     => $securityCode,
@@ -135,7 +279,7 @@ class OVOID
     {
         $ch = new Curl;
 
-        return $ch->get(OVOID::BASE_ENDPOINT . 'v1.0/api/front/', null, $this->_aditionalHeader())->getResponse();
+        return $ch->get(OVOID::BASE_ENDPOINT . 'v3.0/api/front/', null, $this->_aditionalHeader())->getResponse();
     }
 
     /**
@@ -158,7 +302,7 @@ class OVOID
             throw new \Stelin\Exception\AmountException('Minimal 10.000');
         }
 
-        $ch = new Curl;
+        $ch   = new Curl;
         $data = [
             'amount'   => $amount,
             'message'  => $message == '' ? 'Sent from OVOID' : $message,
@@ -182,7 +326,7 @@ class OVOID
      */
     public function isOVO($totalAmount, $mobilePhone)
     {
-        $ch = new Curl;
+        $ch   = new Curl;
         $data = [
             'totalAmount' => $totalAmount,
             'mobile'      => $mobilePhone
@@ -273,7 +417,7 @@ class OVOID
      */
     private function generateTrxId($amount, $actionMark)
     {
-        $ch = new Curl;
+        $ch   = new Curl;
         $data = [
             'actionMark' => $actionMark,
             'amount'     => $amount
@@ -284,7 +428,7 @@ class OVOID
 
     /**
      * Signature unlockAndValidateTrxId
-     * 
+     *
      * @param \Stelin\Response\GenTrxIdResponse
      * @param int $amount
      * @return string
@@ -295,10 +439,10 @@ class OVOID
             $trxId . '||' . $amount . '||' . Meta::DEVICE_ID
         );
     }
-    
+
     /**
      * unlockAndValidateTrxId
-     * 
+     *
      * @param int $amount
      * @param \Stelin\Response\GenTrxIdResponse
      * @param string $securityCode
@@ -309,14 +453,14 @@ class OVOID
         $ch = new Curl;
 
         $data = [
-            'trxId' => $trxId,
-            'signature' => $this->signatureUnlockAndValidateTrxId($trxId, $amount),
-            'appVersion' => Meta::APP_VERSION,
+            'trxId'        => $trxId,
+            'signature'    => $this->signatureUnlockAndValidateTrxId($trxId, $amount),
+            'appVersion'   => Meta::APP_VERSION,
             'securityCode' => $securityCode
         ];
 
         return $ch->post(OVOID::BASE_ENDPOINT, 'v1.0/api/auth/customer/unlockAndValidateTrxId', $data, $this->_aditionalHeader()->getResponse());
-    }      
+    }
 
     /**
      * logout from OVO
@@ -378,7 +522,7 @@ class OVOID
         $ch = new Curl;
 
         return $ch->get(
-            OVOID::BASE_ENDPOINT . 'wallet/v2/transaction?page=' . $page . '&limit=' . $limit . '&productType=001',
+            OVOID::BASE_ENDPOINT . 'wallet/v3/transaction?page=' . $page . '&limit=' . $limit . '&productType=001',
             null,
             $this->_aditionalHeader()
         )->getResponse();
@@ -420,7 +564,7 @@ class OVOID
      */
     public function inquiry($billerId, $customerId, $denomId, $productId)
     {
-        $ch = new Curl;
+        $ch   = new Curl;
         $data = [
             'biller_id'       => (string)$billerId,
             'customer_id'     => $customerId,
@@ -444,7 +588,7 @@ class OVOID
      */
     public function customerUnlock($securityCode)
     {
-        $ch = new Curl;
+        $ch   = new Curl;
         $data = [
             'appVersion'  => Meta::APP_VERSION,
             'securityCode'=> $securityCode
@@ -464,7 +608,7 @@ class OVOID
      */
     public function pay($billerId, $customerId, $order_id, $productId)
     {
-        $ch = new Curl;
+        $ch   = new Curl;
         $data = [
             'biller_id'     => $billerId,
             'customer_id'   => $customerId,
