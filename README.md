@@ -11,21 +11,21 @@
 
 <h2 align="center">Un-Official ovoid API Wrapper</h2>
 
-Telah di test pada OVO versi 2.8.0 | 27 Maret 2019 | PHP 7.2.2
+Telah di test pada OVO versi 3.42.1 | 1 September 2021 | PHP 7.2.2
 
 
-| Method  | Result  |
-|---|---|
-| `login2FA`  | OK |
-| `login2FAVerify`  | OK |
-| `loginSecurityCode`  | OK  |
-| `getBudget`  | OK  |
-| `balanceModel`  | OK  |
-| `logout`  | OK  |
-| `unreadHistory`  | OK  |
-| `getWalletTransaction`  | OK  |
-| `generateTrxId`  | OK  |
-| `transferOvo`  | OK  |
+| Method  | Result  | OVO Version
+|---|---| --- |
+| `OTP`  | OK | 3.42.1 (1 sept 21)
+| `OTPValidation`  | OK | 3.42.1 (1 sept 21)
+| `accountLogin`  | OK  | 3.42.1 (1 sept 21)
+| `getBudget`  | not tested  | 3.42.1 (1 sept 21)
+| `balanceModel`  | not tested  | 3.42.1 (1 sept 21)
+| `logout`  | not tested  | 3.42.1 (1 sept 21)
+| `unreadHistory`  | not tested | 3.42.1 (1 sept 21)
+| `getWalletTransaction`  | not tested  | 3.42.1 (1 sept 21)
+| `generateTrxId`  | not tested  | 3.42.1 (1 sept 21)
+| `transferOvo`  | not tested  | 3.42.1 (1 sept 21)
 
 ## PORTS
 Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ingin menulis dibahasa tersebut silahkan ajukan Issue baru nanti akan saya list disini
@@ -57,16 +57,16 @@ Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ing
 require 'vendor/autoload.php';
 use Stelin\OVOID;
 
-$ovoid = new OVOID();
-echo $ovoid->login2FA('<mobilePhone>')->getRefId();
+$ovo = new OVOID(null, "contoh-device-id");
+echo $ovo->OTP("+62xxxxxxxx")->getData()->getOtp()->getOtpRefId();
 ```
 ### second step
 ```php
-echo $ovoid->login2FAVerify('<refId>', '<OTP code>', '<mobilePhone>')->getUpdateAccessToken();
+$ovo->OTPValidation("+62xxxxxx", "otp-ref-id", "otp")->getData()->getOtp();->getOtpToken()->getUpdateAccessToken();
 ```
 ### third step
 ```php
-echo $ovoid->loginSecurityCode('<pin code>', '<updateAccessToken>')->getAuthorizationToken();
+echo $ovo->accountLogin("+62xxxxx", 'otp-ref-id', 'otp-token', '6-digit-security-code')->getData()->getAuth()->getAccessToken();
 ```
 
 ## Balance Model
