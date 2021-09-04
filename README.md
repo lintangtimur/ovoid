@@ -62,7 +62,7 @@ echo $ovo->OTP("+62xxxxxxxx")->getData()->getOtp()->getOtpRefId();
 ```
 ### second step
 ```php
-$ovo->OTPValidation("+62xxxxxx", "otp-ref-id", "otp")->getData()->getOtp();->getOtpToken()->getUpdateAccessToken();
+echo $ovo->OTPValidation("+62xxxxxx", "otp-ref-id", "otp")->getData()->getOtp()->getOtpToken();
 ```
 ### third step
 ```php
