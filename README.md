@@ -11,21 +11,21 @@
 
 <h2 align="center">Un-Official ovoid API Wrapper</h2>
 
-Telah di test pada OVO versi 3.42.1 | 1 September 2021 | PHP 7.2.2
+Telah di test pada OVO versi 3.43.0 | 24 September 2021 | PHP 7.2.2
 
 
 | Method  | Result  | OVO Version
 |---|---| --- |
-| `OTP`  | OK | 3.42.1 (1 sept 21)
-| `OTPValidation`  | OK | 3.42.1 (1 sept 21)
-| `accountLogin`  | OK  | 3.42.1 (1 sept 21)
-| `getBudget`  | not tested  | 3.42.1 (1 sept 21)
-| `balanceModel`  | not tested  | 3.42.1 (1 sept 21)
-| `logout`  | not tested  | 3.42.1 (1 sept 21)
-| `unreadHistory`  | not tested | 3.42.1 (1 sept 21)
-| `getWalletTransaction`  | not tested  | 3.42.1 (1 sept 21)
-| `generateTrxId`  | not tested  | 3.42.1 (1 sept 21)
-| `transferOvo`  | not tested  | 3.42.1 (1 sept 21)
+| `OTP`  | OK | 3.43.0(24 sept 21)
+| `OTPValidation`  | OK | 3.43.0 (24 sept 21)
+| `accountLogin`  | OK  | 3.43.0 (24 sept 21)
+| `getBudget`  | OK | 3.43.0 (24 sept 21)
+| `balanceModel`  | OK  | 3.43.0 (24 sept 21)
+| `logout`  | not tested  | 3.43.0 (24 sept 21)
+| `unreadHistory`  | not tested | 3.43.0 (24 sept 21)
+| `getWalletTransaction`  | OK | 3.43.0 (24 sept 21)
+| `generateTrxId`  | not tested  | 3.43.0 (24 sept 21)
+| `transferOvo`  | not tested  | 3.43.0 (24 sept 21)
 
 ## PORTS
 Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ingin menulis dibahasa tersebut silahkan ajukan Issue baru nanti akan saya list disini
