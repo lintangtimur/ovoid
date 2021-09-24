@@ -12,7 +12,7 @@ class ParseResponse
         OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/login2FA'                       => 'Stelin\Response\Login2FAResponse',
         OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/login2FA/verify'                => 'Stelin\Response\Login2FAVerifyResponse',
         OVOID::BASE_ENDPOINT . 'v2.0/api/auth/customer/loginSecurityCode/verify'       => 'Stelin\Response\LoginSecurityCodeResponse',
-        OVOID::BASE_ENDPOINT . 'v3.0/api/front/'                                       => 'Stelin\Response\FrontResponse',
+        OVOID::BASE_ENDPOINT . 'v3.0/api/front'                                        => 'Stelin\Response\FrontResponse',
         OVOID::BASE_ENDPOINT . 'v1.0/budget/detail'                                    => 'Stelin\Response\BudgetResponse',
         OVOID::BASE_ENDPOINT . 'v1.0/api/customers/transfer'                           => 'Stelin\Response\CustomerTransferResponse',
         OVOID::BASE_ENDPOINT . 'v1.0/api/auth/customer/genTrxId'                       => 'Stelin\Response\GenTrxIdResponse',
@@ -31,7 +31,7 @@ class ParseResponse
         OVOID::OVO_API_AWS . 'v3/user/accounts/otp'                                    => 'Stelin\Response\OTPResponse',
         OVOID::OVO_API_AWS . 'v3/user/accounts/otp/validation'                         => 'Stelin\Response\OTPValidationResponse',
         OVOID::OVO_API_AWS . 'v3/user/public_keys'                                     => 'Stelin\Response\PublicKeyResponse',
-        OVOID::OVO_API_AWS . 'v3/user/accounts/login'                                  => 'Stelin\Response\AccountLoginResponse'
+        OVOID::OVO_API_AWS . 'v3/user/accounts/login'                                  => 'Stelin\Response\AccountLoginResponse',
 
     ];
 
@@ -45,6 +45,7 @@ class ParseResponse
      */
     public function __construct($chResult, $url)
     {
+        // dd($chResult, $url);
         $jsonDecodeResult = json_decode($chResult);
         //-- Cek apakah ada error dari OVO Response
         if (isset($jsonDecodeResult->code)) {
@@ -53,8 +54,10 @@ class ParseResponse
 
         $parts = parse_url($url);
 
-        if ($parts['path'] == '/wallet/v3/transaction') {
+        if ($parts['path'] == '/wallet/v2/transaction') {
             $this->response = new \Stelin\Response\WalletTransactionResponse($jsonDecodeResult);
+        } elseif ($parts['path'] == '/payment/orders/v1/list') {
+            $this->response = new \Stelin\Response\PaymentOrdersResponse($jsonDecodeResult);
         } elseif (strpos($parts['path'], '/gpdm/ovo/ID/v1/billpay/get-denominations/') !== false) {
             $this->response = new \Stelin\Response\DenominationsReponse($jsonDecodeResult);
         } else {

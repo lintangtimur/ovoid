@@ -34,9 +34,9 @@ class OVOID
         'OS-Version'=> '9.0',
         'client-id' => 'ovo_android',
         'device-id' => '87586011-0127-3469-aa2a-6016a68d45f6',
-        'host'      => 'agw.ovo.id',
+        // 'host'      => 'agw.ovo.id',
         // 'App-Version' => Meta::APP_VERSION,
-        'User-Agent' => 'okhttp/4.9.0',
+        'User-Agent'  => 'okhttp/4.9.0',
         // 'Connection'=> 'close',
         // "Accept-Encoding" => "gzip, deflate"
     ];
@@ -279,7 +279,7 @@ class OVOID
     {
         $ch = new Curl;
 
-        return $ch->get(OVOID::BASE_ENDPOINT . 'v3.0/api/front/', null, $this->_aditionalHeader())->getResponse();
+        return $ch->get(OVOID::BASE_ENDPOINT . 'v3.0/api/front', null, $this->_aditionalHeader())->getResponse();
     }
 
     /**
@@ -479,9 +479,13 @@ class OVOID
      *
      * @return array
      */
-    private function _aditionalHeader()
+    private function _aditionalHeader($bearer = false)
     {
         $temp = ['Authorization'=> $this->authToken];
+
+        if ($bearer) {
+            $temp = ['Authorization'=> 'Bearer ' . $this->authToken];
+        }
 
         return array_merge($temp, $this->headers);
     }
@@ -522,7 +526,7 @@ class OVOID
         $ch = new Curl;
 
         return $ch->get(
-            OVOID::BASE_ENDPOINT . 'wallet/v3/transaction?page=' . $page . '&limit=' . $limit . '&productType=001',
+            OVOID::BASE_ENDPOINT . 'wallet/v2/transaction?page=' . $page . '&limit=' . $limit . '&productType=001',
             null,
             $this->_aditionalHeader()
         )->getResponse();
