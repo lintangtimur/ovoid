@@ -32,6 +32,7 @@ class ParseResponse
         OVOID::OVO_API_AWS . 'v3/user/accounts/otp/validation'                         => 'Stelin\Response\OTPValidationResponse',
         OVOID::OVO_API_AWS . 'v3/user/public_keys'                                     => 'Stelin\Response\PublicKeyResponse',
         OVOID::OVO_API_AWS . 'v3/user/accounts/login'                                  => 'Stelin\Response\AccountLoginResponse',
+        OVOID::BASE_ENDPOINT . 'wallet/inquiry'                                        => 'Stelin\Response\BalanceResponse',
 
     ];
 
@@ -54,12 +55,16 @@ class ParseResponse
 
         $parts = parse_url($url);
 
+        $uriSegments = explode('/', parse_url($url, PHP_URL_PATH));
+
         if ($parts['path'] == '/wallet/v2/transaction') {
             $this->response = new \Stelin\Response\WalletTransactionResponse($jsonDecodeResult);
         } elseif ($parts['path'] == '/payment/orders/v1/list') {
             $this->response = new \Stelin\Response\PaymentOrdersResponse($jsonDecodeResult);
         } elseif (strpos($parts['path'], '/gpdm/ovo/ID/v1/billpay/get-denominations/') !== false) {
             $this->response = new \Stelin\Response\DenominationsReponse($jsonDecodeResult);
+        } elseif ($uriSegments[1] == 'wallet' && $uriSegments[2] == 'transaction') {
+            $this->response = new \Stelin\Response\DetailHistoryResponse($jsonDecodeResult);
         } else {
             $this->response = new $this->storeClass[$url]($jsonDecodeResult);
         }

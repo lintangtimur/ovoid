@@ -643,4 +643,30 @@ class OVOID
 
         return $ch->post(OVOID::AWS . 'gpdm/ovo/ID/v1/billpay/checkstatus', $data, $this->_aditionalHeader())->getResponse();
     }
+
+    /**
+     * Detail History
+     *
+     * @param string $merchantId get from wallet history
+     * @param string $merchantInvoice get from wallet history
+     * @return \Stelin\Response\DetailHistoryResponse
+     */
+    public function detailHistory($merchantId, $merchantInvoice)
+    {
+        $ch = new Curl;
+
+        return $ch->get(OVOID::BASE_ENDPOINT . 'wallet/transaction/' . $merchantId . '/' . $merchantInvoice, null, $this->_aditionalHeader())->getResponse();
+    }
+
+    /**
+     * Check balance OVO
+     *
+     * @return \Stelin\Response\BalanceResponse
+     */
+    public function balance()
+    {
+        $ch = new Curl;
+
+        return $ch->get(OVOID::BASE_ENDPOINT . 'wallet/inquiry', null, $this->_aditionalHeader())->getResponse();
+    }
 }
