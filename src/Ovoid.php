@@ -27,15 +27,14 @@ class OVOID
      * @var string
      */
     private $authToken;
-    private $deviceId;
 
     private $headers = [
         'OS'        => 'Android',
         'OS-Version'=> '9.0',
         'client-id' => 'ovo_android',
-        'device-id' => '87586011-0127-3469-aa2a-6016a68d45f6',
+        'device-id' => '',
         // 'host'      => 'agw.ovo.id',
-        // 'App-Version' => Meta::APP_VERSION,
+        'App-Version' => Meta::APP_VERSION,
         'User-Agent'  => 'okhttp/4.9.0',
         // 'Connection'=> 'close',
         // "Accept-Encoding" => "gzip, deflate"
@@ -50,12 +49,16 @@ class OVOID
      * OVOID
      *
      * @param string $authToken
-     * @param string $deviceId
      */
     public function __construct($authToken = null, $deviceId)
     {
         $this->authToken = $authToken;
-        $this->deviceId  = $deviceId;
+        $this->_setDeviceId($deviceId);
+    }
+
+    private function _setDeviceId($deviceId)
+    {
+        $this->headers['device-id'] = $deviceId;
     }
 
     /**
@@ -70,7 +73,7 @@ class OVOID
 
         $data = [
             'channel_code'=> 'ovo_android',
-            'device_id'   => '87586011-0127-3469-aa2a-6016a68d45f6',
+            'device_id'   => $this->headers['device-id'],
             'msisdn'      => $noTelp,
             'otp'         => [
                 'locale'  => 'ID',
@@ -95,7 +98,7 @@ class OVOID
 
         $data = [
             'channel_code'=> 'ovo_android',
-            'device_id'   => '87586011-0127-3469-aa2a-6016a68d45f6',
+            'device_id'   => $this->headers['device-id'],
             'msisdn'      => $noTelp,
             'otp'         => [
                 'otp'       => $otp,
@@ -119,11 +122,12 @@ class OVOID
             'OS'         => 'Android',
             'OS-Version' => '9.0',
             'client-id'  => 'ovo_android',
-            'device-id'  => '87586011-0127-3469-aa2a-6016a68d45f6',
+            'device-id'  => $this->headers['device-id'],
             'host'       => 'agw.ovo.id',
             'User-Agent' => 'okhttp/4.9.0',
             'Connection' => 'close',
         ];
+
         return $ch->get(OVOID::OVO_API_AWS . 'v3/user/public_keys', null, $this->headers)->getResponse();
     }
 
@@ -142,7 +146,7 @@ class OVOID
 
         $data = [
             'channel_code'=> 'ovo_android',
-            'device_id'   => '87586011-0127-3469-aa2a-6016a68d45f6',
+            'device_id'   => $this->headers['device-id'],
             'credentials' => [
                 'otp_token'=> $otpToken,
                 'password' => [
@@ -171,11 +175,11 @@ class OVOID
 
         // $publicKey = str_replace("\n","",$publicKey);
 
-        // dd($publicKey);
-        $deviceId             = '87586011-0127-3469-aa2a-6016a68d45f6';
+        $deviceId             = $this->headers['device-id'];
         $currentTimeInMillies = '1629220160';
         $payload              = "LOGIN|{$securityCode}|{$currentTimeInMillies}|{$deviceId}|{$noTelp}|{$deviceId}|{$otpRefId}";
-        \openssl_public_encrypt($payload, $encrypted, $publicKey);
+
+        \openssl_public_encrypt($payload, $encrypted, $publicKey, 2);
 
         return \base64_encode($encrypted);
     }
@@ -196,7 +200,7 @@ class OVOID
             'OS'          => 'Android',
             'OS-Version'  => '7.1.1',
             'client-id'   => 'ovo_android',
-            'device-id'   => '87586011-0127-3469-aa2a-6016a68d45f6',
+            'device-id'   => $this->headers['device-id'],
             'app-id'      => Meta::APP_ID,
             'App-Version' => Meta::APP_VERSION
         ];
