@@ -8,7 +8,7 @@ use Stelin\Meta\ActionMark;
 /**
  * OVOID
  *
- * @author lintangtimur <lintangtimur915@gmail.com>
+ * @author lintangtimur
  * @package library
  * @license MIT
  */
