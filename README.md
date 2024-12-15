@@ -10,9 +10,6 @@
 
 </p>
 
-  ### Untuk Donasi
-https://trakteer.id/stefanus-lintang/tip
-
 <h2 align="center">Un-Official ovoid API Wrapper</h2>
 
 Telah di test pada OVO versi 3.43.0 | 24 September 2021 | PHP 7.2.2
