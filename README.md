@@ -1,169 +1,258 @@
-
 <p align="center">
 <a href="https://packagist.org/packages/lintangtimur/ovoid"><img src="https://img.shields.io/packagist/v/lintangtimur/ovoid.svg?style=popout-square"></a>
-  <a href="https://github.com/lintangtimur/ovoid/blob/master/LICENSE"><img src="https://img.shields.io/github/license/lintangtimur/ovoid.svg?style=popout-square"></a>
-  <a class="badge-align" href="https://www.codacy.com/app/lintangtimur/ovoid?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lintangtimur/ovoid&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/9699ecb8baf64fdb94692b90b01c73b1"/></a>
-  <img alt="Packagist" src="https://img.shields.io/packagist/dt/lintangtimur/ovoid?style=flat-square">
-<img alt="patreons" src="https://img.shields.io/endpoint?url=https://shieldsio-patreon.herokuapp.com/lintangtimur&style=flat">
-  
-
-
+<a href="https://github.com/lintangtimur/ovoid/blob/master/LICENSE"><img src="https://img.shields.io/github/license/lintangtimur/ovoid.svg?style=popout-square"></a>
+<img alt="Packagist" src="https://img.shields.io/packagist/dt/lintangtimur/ovoid?style=flat-square">
 </p>
 
-<h2 align="center">Un-Official ovoid API Wrapper</h2>
+<h2 align="center">ovoid — Unofficial OVO API client for PHP</h2>
 
-Telah di test pada OVO versi 3.43.0 | 24 September 2021 | PHP 7.2.2
+A lightweight, zero-dependency PHP client for the OVO (`ovo.id`) mobile wallet API. It mirrors
+the request/response shapes the official app uses, so the endpoints behave the same way you'd
+see in the app.
 
+> Research/educational use only. Not affiliated with OVO. This library does not bypass any
+> protection  it still needs real OTP/PIN credentials for the account it is used with, and
+> it cannot reproduce the hardware-bound ECDSA signature used by OVO's Digibank feature.
 
-| Method  | Result  | OVO Version
-|---|---| --- |
-| `OTP`  | OK | 3.43.0(5 okt 21)
-| `OTPValidation`  | OK | 3.43.0 (5 okt 21)
-| `accountLogin`  | OK  | 3.43.0 (5 okt 21)
-| `getBudget`  | OK | 3.43.0 (24 sept 21)
-| `balanceModel`  | OK  | 3.43.0 (24 sept 21)
-| `logout`  | not tested  | 3.43.0 (24 sept 21)
-| `unreadHistory`  | tested | 3.43.0 (5 okt 21)
-| `getWalletTransaction`  | OK | 3.43.0 (24 sept 21)
-| `detailHistory`  |  tested  | 3.43.0 (5 okt 21)
-| `balance`  |  tested  | 3.43.0 (5 okt 21)
-| `generateTrxId`  | not tested  | 3.43.0 (24 sept 21)
-| `transferOvo`  | not tested  | 3.43.0 (24 sept 21)
+## Requirements
 
+- PHP 8.1+
+- `ext-curl`, `ext-openssl`
+- No other dependencies
 
-## PORTS
-Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ingin menulis dibahasa tersebut silahkan ajukan Issue baru nanti akan saya list disini
+```bash
+composer require lintangtimur/ovoid
+```
 
-### Python
-- [@anysz/ovopy](https://github.com/anysz/ovopy) by [anysz](https://github.com/anysz)
+## Quick start — login
 
-### Flutter
-- [@maulana20/ovoid-flutter](https://github.com/maulana20/ovoid-flutter) by [maulana20](https://github.com/maulana20)
+OVO's login always requires a validated OTP, even for accounts that already have a PIN set.
+The flow is: **request OTP → validate the code → login with PIN** (PIN is RSA-encrypted
+automatically before it leaves your machine).
 
-### GO
-- [@adibaulia/ovoid-go](https://github.com/adibaulia/ovoid-go) by [adibaulia](https://github.com/adibaulia)
-
-### Java
-- 
-
-### Ruby
-- [@namdevel/ovoid-ruby](https://github.com/namdevel/ovoid-ruby) by [namdevel](https://github.com/namdevel)
-
-### Javascript / nodejs
-- [@apriady/ovoid-nodejs](https://github.com/apriady/ovoid-nodejs) by [apriady](https://github.com/apriady)
-
-## Install
-`composer require lintangtimur/ovoid`
-
-## Login
-### first step
 ```php
-require 'vendor/autoload.php';
 use Stelin\OVOID;
 
-$ovo = new OVOID(null, "contoh-device-id");
-echo $ovo->OTP("+62xxxxxxxx")->getData()->getOtp()->getOtpRefId();
+$deviceId = 'any-stable-string-you-generate-once';
+$ovo = new OVOID($deviceId);
+
+// 1) Request a code. The server sends either:
+//      - SMS with a 6-digit code, or
+//      - a magic link (WhatsApp/email) whose URL carries the code in its `?code=` query param.
+$otp = $ovo->auth->requestOtp('+62812xxxxxxx', $deviceId)['otp'];
+$otpRefId = $otp['otp_ref_id'];
+$otpType  = $otp['type']; // MUST be echoed back in validateOtp() — see below
+
+// 2) Validate whatever the user received (the 6-digit SMS code, OR the `code` value from the link).
+$validated = $ovo->auth->validateOtp('+62812xxxxxxx', $deviceId, $code, $otpRefId, $otpType);
+
+// 3) Log in. `otp_token` and `otp_ref_id` come from validateOtp().
+$login = $ovo->auth->loginWithPin(
+    '+62812xxxxxxx',
+    $pin,
+    $deviceId,
+    $validated['otp']['otp_token'],
+    $validated['otp']['otp_ref_id'],
+);
+
+// 4) Use the access token for everything else.
+$ovo->client->setAccessToken($login['auth']['access_token']);
+$balance = $ovo->balance->inquiryBalance();
 ```
-### second step
+
+> **Two delivery channels, one validation call.** The server decides which channel to use; it
+> is reported by `requestOtp()` (and `resolveOnboardingType()`) via `otp.reff_type`:
+> `"OTP"` = SMS code, `"LINK"` = magic link. Both are validated with the same
+> `validateOtp()` — you only change what you pass as the `$code`.
+
+> **Echo `type` back into `validateOtp()`.** The server rejects the call with
+> `OV00002 "type: non zero value required"` when `$type` is empty, so always pass through the
+> `type` returned by `requestOtp()` (values seen: `LOGIN`, `CREATION`, ...). Same for
+> `loginWithPin()`: `push_notification_id` must be non-empty (the wrapper falls back to
+> `device_id` for you).
+
+`resolveOnboardingType()` is **optional** — it mirrors the app's phone-number dispatch so you
+can peek at the account's channel *before* requesting a code:
+
 ```php
-echo $ovo->OTPValidation("+62xxxxxx", "otp-ref-id", "otp")->getData()->getOtp()->getOtpToken();
+$onboarding = $ovo->auth->resolveOnboardingType('+62812xxxxxxx', $deviceId);
+// $onboarding['next'] === 'PIN_ENTRY' | 'OTP_VERIFY' | 'MAGIC_LINK' | 'UNKNOWN'
 ```
-### third step
+
+You do **not** need it to log in: the `requestOtp → validateOtp → loginWithPin` sequence above
+is sufficient. Note that for some accounts the `onboardingType` endpoint returns `OV00013`
+("Anda Tidak Memiliki Akses"); that's a red herring for login — this library does not depend on
+it as a prerequisite.
+
+## Feature examples
+
+Everything below assumes you already have a session (see "Quick start — login"):
+
 ```php
-echo $ovo->accountLogin("+62xxxxx", 'otp-ref-id', 'otp-token', '6-digit-security-code')->getData()->getAuth()->getAccessToken();
-```
-
-## Balance Model
-### Get Payment Method
-`getPaymentMethod()`
-
-### Get Card Balance
-`getCardBalance($payment_method)`
-
-### Get Card No
-`getCardNo($payment_method)`
-
-## EXAMPLE
-```php
-<?php
-
-require 'vendor/autoload.php';
-
 use Stelin\OVOID;
-$ovoid = new OVOID($authToken);
-dd($ovoid->modelBalance()->getBalance()->getCardNo()('OVO'));
+
+$ovo = new OVOID($deviceId);
+$ovo->client->setAccessToken($accessToken); // from $login['auth']['access_token']
 ```
 
-## Profile Model
+### Balance
 
-## Permission Model
-
-## Transfer Sesama OVO
-<pre>
-Telah di test di OVO 2.8.0
-</pre>
-Sebelum transfer silahkan cek akunnya benar atau tidak dengan method ```isOVO()```, lalu jalankan method dibawah
 ```php
-public function transferOvo($to_mobilePhone, $amount, $message = null)
-```
-Sementara hanya bisa 2 kali transfer, untuk transfer ke-3 dari OVO butuh header signature. Jika ada yang bisa menemukan proses signaturenya silahkan ajukan pull request dengan senang hati :)
+$balance = $ovo->balance->inquiryBalance();
 
-## Transaction History
+// `wallet/inquiry` uses the OLDER `{status, data, message}` envelope, so read `['data']` yourself.
+$data = $balance['data'] ?? [];
+// OVO Cash ('001'), OVO Points ('600'), ... keyed by payment-method id:
+$ovoCash   = $data['001']['card_balance'] ?? null;
+$ovoPoints = $data['600']['card_balance'] ?? null;
+echo "OVO Cash: {$ovoCash}, OVO Points: {$ovoPoints}";
+```
+
+### History
+
 ```php
-/**
-     * Wallet Transaction
-     *
-     * @param int $page halaman ke berapa
-     * @param int $limit berapa kontent dalam 1 page
-     * @return \Stelin\Response\WalletTransactionResponse
-     */
-    public function getWalletTransaction($page, $limit = 10)
+$history = $ovo->history->getTransactionHistory(1, 10);            // page 1, limit 10
+$detail  = $ovo->history->getTransactionDetail($merchantId, $merchantInvoice);
 ```
-disitu ada hardcode productType 001, bisa dicoba sendiri itu efek terhadap apa, karena saya tesnya hasil transfer sesama OVO.
 
-### Mendapatkan semua notif
+### Transfer (read-only first)
+
 ```php
-    /**
-     * get all notification
-     *
-     * @return \Stelin\Response\NotificationAllResponse
-     */
-    public function allNotification()
+// Always check validity/fees before executing anything:
+$bankList = $ovo->transfer->getBankList();
+$inquiry  = $ovo->transfer->inquiryTransfer($accountNo, $bankCode, $bankName, '50000', 'message');
+$isOvo    = $ovo->transfer->verifyCustomerIsOvo($mobileNumber, '50000', 'message');
 ```
 
-### Cek berapa notifikasi yang belum dibaca
+### Transfer (moves money)
+
 ```php
-/**
-     * mendapatkan total unread history
-     *
-     * @return \Stelin\Response\NotificationUnread
-     */
-    public function unreadHistory()
+// EXECUTES a real transfer. Throws AmountException if below the 10,000 minimum.
+$ovo->transfer->transferBankDirect(
+    $accountName, $accountNo, $accountNoDestination, '50000', $bankCode, $bankName);
+$ovo->transfer->transferP2p('50000', $targetOvoMsisdn, $trxId);
 ```
-Contoh: `$ovo->unreadHistory()->getTotal()`
 
-### Transfer Antar Bank
+> ⚠️ The `transferBankDirect()` / `transferP2p()` methods move real money. Always call the
+> read-only `inquiryTransfer()` / `verifyCustomerIsOvo()` first, and test against your own
+> account.
+
+### Registration (new OVO account)
+
 ```php
-
-    /**
-     * transer antar bank
-     *
-     * @param  string                                  $accountName          nama akun
-     * @param  string                                  $accountNo            No akun OVO Cash
-     * @param  string                                  $accountNoDestination No rekening yang dituju
-     * @param  int                                     $amount               jumlah yang akan ditransfer
-     * @param  string                                  $bankCode             kode bank yang dituju
-     * @param  string                                  $bankName             nama bank
-     * @param  string                                  $message
-     * @param  string                                  $notes
-     * @return \Stelin\Response\TransferDirectResponse
-     */
-    public function transferBank($accountName, $accountNo, $accountNoDestination, $amount, $bankCode, $bankName, $message, $notes)
+// Same shape as loginWithPin(), but type "CREATE" and optional full name.
+$register = $ovo->auth->registerWithPin(
+    $msisdn, $pin, $deviceId,
+    $validated['otp']['otp_token'], $validated['otp']['otp_ref_id'],
+    fullName: 'Nama Pemilik',           // optional
+);
 ```
 
-## TODO
-- [x] Signature Header untuk transfer sesama OVO lebih dari 2x
+## Caching the session token
 
+Logging in needs a fresh OTP each time, so you can cache the session to skip it while the
+token is still valid (~24 hours):
 
-## Contribute
-Project ini saya membuatnya kasaran sekali, jadi ketika ada proses request ke endpoint ovo dan terjadi kegagalan atau parameter tidak sesuai, script masih belum bisa mendapatkan response error dari ovo nya, harus manual `dd` dari source code(dari file Response). Jadi silahkan berkontribusi, baik dari dokumentasi program atau membenahi script ini :)
+```php
+use Stelin\TokenCache;
+
+$auth = TokenCache::load(__DIR__ . '/.ovo-token.json');
+if ($auth === null) {
+    // ...OTP + loginWithPin() as above...
+    TokenCache::save(__DIR__ . '/.ovo-token.json', $login['auth']);
+    $auth = $login['auth'];
+}
+$ovo->client->setAccessToken($auth['access_token']);
+```
+
+> `TokenCache` compares `expires_in` against the current time as an **absolute epoch
+> timestamp** (not as a duration) — see its PHPDoc for why.
+
+`TokenCache::loadPendingOtp()` / `savePendingOtp()` do the same for an in-flight OTP request:
+if `requestOtp()` hits the cooldown (`OV00015`) on a retry, the *previous* `otp_ref_id` — and
+the SMS it already sent — are usually still valid. Save it after a successful `requestOtp()`
+and fall back to it on cooldown instead of giving up:
+
+```php
+try {
+    $otp = $ovo->auth->requestOtp($msisdn, $deviceId)['otp'];
+    TokenCache::savePendingOtp(__DIR__ . '/.ovo-otp-pending.json', $otp);
+} catch (ApiException $e) {
+    $otp = TokenCache::loadPendingOtp(__DIR__ . '/.ovo-otp-pending.json', ignoreExpiry: true)
+        ?? throw $e; // nothing to fall back to
+}
+```
+
+## Services
+
+Everything is exposed on one `OVOID` instance:
+
+| Service | Methods | Effect |
+|---|---|---|
+| `$ovo->auth` | `requestOtp()`, `validateOtp()`, `resolveOnboardingType()`, `loginWithPin()`, `registerWithPin()`, `stepUpInitiate()`, `verifyPin()`, `verifyOtp()`, `resendOtp()` | login / OTP / register / RBA step-up |
+| `$ovo->balance` | `inquiryBalance()` | read-only |
+| `$ovo->history` | `getTransactionHistory()`, `getTabunganHistory()`, `getPayLaterHistory()`, `getTransactionDetail()`, `getRecentTransactions()`, `getReceiptContent()`, `addFavoriteFromReceipt()`, `deleteRecentTransaction()` | read-only |
+| `$ovo->transfer` | `getBankList()`, `getTransferHistory()`, `inquiryTransfer()`, `verifyCustomerIsOvo()`, `getFavoriteTransfer()`, `addFavoriteBankTransfer()`, `addFavoriteP2pTransfer()`, `deleteFavoriteTransfer()` | read-only |
+| `$ovo->transfer` | `transferBankDirect()`, `transferP2p()` | **EXECUTES a transfer** |
+| `$ovo->payment` | `doQrPayment()`, `getPaymentMethod()`, `sendPayment()`, `getTip()`, `getCapPoint()` | payment / QR (⚠️ `doQrPayment` signature is experimental) |
+| `$ovo->qris` | `qrScanPay()`, `generateCheckoutData()` | read-only |
+| `$ovo->checkout` | `doCheckout()`, `getCheckoutDetail()`, `getPromos()`, `cancelPromo()` | merchant checkout |
+| `$ovo->billpay` | `getCategories()`, `getBillersByCategory()`, `inquiry()`, `payBill()`, `editFavorite()`, ... | bill payment |
+| `$ovo->linkage` | `getAllLinkages()`, `getTnc()`, `acceptTnc()`, `initiateLinkage()`, `linkPartnerAccount()`, `unlinkAccount()` | OAuth partner linkage |
+| `$ovo->kyc` | `getCustomerUpgradeStatus()`, `getKycStatus()` | read-only |
+| `$ovo->withdrawal` | `getWithdrawalSource()`, `getNominalSuggestions()`, `doWithdrawal()`, `generateWithdrawalCode()`, `getWithdrawalGuidance()` | cash out |
+| `$ovo->topup` | `getTopUpMenu()`, `getTopupDenom()`, `topUpDebitPrepare()`, `topupDebit()` | top-up (debit card) |
+| `$ovo->topupPartner` | `getStoreDetails()`, `generateTopUpPaymentCode()`, `getTopUpPaymentCode()` | top-up (voucher/agent) |
+| `$ovo->security` | `unlock()`, `unlockActionMark()`, `unlockAndValidateTrxId()` | wallet unlock / PIN re-validation |
+
+Methods that move real money throw `\Stelin\Exception\AmountException` if the amount is below
+OVO's minimum (`10,000`). Always call the read-only `inquiryTransfer()` / `verifyCustomerIsOvo()`
+first, and test with your own account before relying on this in anything unattended.
+
+## Response envelope
+
+Most endpoints wrap responses as `{response_code, response_version, response_message, data}` —
+`Client` unwraps this and you get `data` back directly.
+
+A few older endpoints use `{status, data, message}` instead (e.g. `wallet/inquiry`). Those do
+**not** match the unwrap condition, so they're returned unmodified — read `['data']` yourself
+for those specific calls (documented on the relevant method).
+
+## Errors
+
+Every **non-2xx** API response throws `\Stelin\Exception\ApiException`, which carries the
+machine-readable OVO error code:
+
+```php
+use Stelin\Exception\ApiException;
+
+try {
+    $ovo->auth->requestOtp($msisdn, $deviceId);
+} catch (ApiException $e) {
+    // $e->responseCode: e.g. "OV00015" (rate limit), "OV00060" (invalid phone number)
+    // $e->getMessage(): the human-readable message OVO sent
+    // $e->payload: the full decoded response body
+    // $e->httpStatus: the HTTP status code
+}
+```
+
+Known codes:
+
+| Code | Meaning |
+|---|---|
+| `OV00002` | field validation — message like `"<field>: non zero value required"` (empty `type`, `otp`, or `push_notification_id` in the login flow). Fill the field rather than retrying. |
+| `OV00003` / `OV00521` | rate limit / cooldown (~30 min) |
+| `OV00015` | OTP cooldown (~60 s) |
+| `OV00013` | "Anda Tidak Memiliki Akses" — generic access-denied; often session-invalid or a pre-login endpoint rejecting this account/device. Not caused by headers anymore (`client-id` is correct). |
+| `OV00060` | invalid phone number |
+
+## Testing
+
+```bash
+composer install
+composer test
+```
+
+Tests are pure unit tests (crypto round-trips, request/response shape assertions against a
+fake HTTP client) — nothing hits the real API, so `composer test` is safe to run without
+credentials.

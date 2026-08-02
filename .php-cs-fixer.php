@@ -2,7 +2,8 @@
 
 return (new PhpCsFixer\Config())
     ->setRules([
-        '@PSR2'                                  => true,
+        // PSR-12 is the current PSR coding style (superset of PSR-2, PHP 8.1-compatible).
+        '@PSR12'                                 => true,
         'array_indentation'                      => true,
         'array_syntax'                           => ['syntax' => 'short'],
         'combine_consecutive_unsets'             => true,
