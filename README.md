@@ -23,7 +23,28 @@ see in the app.
 ```bash
 composer require lintangtimur/ovoid
 ```
+## PORTS
+Jika PHP tidak nyaman bagimu bisa mencoba bahasa pemrograman lain, atau jika ingin menulis dibahasa tersebut silahkan ajukan Issue baru nanti akan saya list disini
 
+### Python
+- [@anysz/ovopy](https://github.com/anysz/ovopy) by [anysz](https://github.com/anysz)
+- [@AlfinAI/ovoid-python](https://github.com/AlfinAI/ovoid-python) by [AlfinAI](https://github.com/AlfinA)
+
+### Flutter
+- [@maulana20/ovoid-flutter](https://github.com/maulana20/ovoid-flutter) by [maulana20](https://github.com/maulana20)
+
+### GO
+- [@adibaulia/ovoid-go](https://github.com/adibaulia/ovoid-go) by [adibaulia](https://github.com/adibaulia)
+
+### Java
+- 
+
+### Ruby
+- [@namdevel/ovoid-ruby](https://github.com/namdevel/ovoid-ruby) by [namdevel](https://github.com/namdevel)
+
+### Javascript / nodejs
+- [@apriady/ovoid-nodejs](https://github.com/apriady/ovoid-nodejs) by [apriady](https://github.com/apriady)
+- 
 ## Quick start — login
 
 OVO's login always requires a validated OTP, even for accounts that already have a PIN set.
